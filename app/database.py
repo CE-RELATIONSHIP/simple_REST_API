@@ -1,12 +1,14 @@
+from global_config import GlobalConfig
 import mysql.connector
+from os import getenv
 
 def ConnectorMysql():
     try:
         mydb = mysql.connector.connect(
-                host="",
-                user="",
-                passwd="",
-                database="",
+                host=getenv(GlobalConfig.HOST),
+                user=getenv(GlobalConfig.USER),
+                passwd=getenv(GlobalConfig.PASSWORD),
+                database=getenv(GlobalConfig.DB_NAME),
                 auth_plugin='mysql_native_password'
         )
     except Exception as error:
@@ -45,6 +47,7 @@ def get_data(from_table, uid):
 def insert_data(from_table, uid, name, age):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
+    print(mycursor)
     sql = f"INSERT INTO {from_table} (uid,name,age) VALUES (%s ,%s, %s)"
     val = (uid, name, age)
     mycursor.execute(sql, val)

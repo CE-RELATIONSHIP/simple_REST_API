@@ -1,6 +1,77 @@
 services:
-  web:
+  db-dev:
+    build:
+      context: db
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: db-dev
+      MYSQL_USER: webapp
+      MYSQL_PASSWORD: secure-password
+    volumes:
+      - ./db/dev:/var/lib/mysql 
+    ports:
+      -  "32000:3306"
+    networks:
+      - dev-environment
+  
+  api-dev:
     build:
       context: app
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_DATABASE: db-dev
+      MYSQL_USER: webapp
+      MYSQL_PASSWORD: secure-password
+      HOST: db-dev
     ports:
-      - "5000:5000"
+      - "80:5000"
+    networks:
+      - dev-environment
+  
+  db-test:
+    build:
+      context: db
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: db-test
+      MYSQL_USER: webapp
+      MYSQL_PASSWORD: secure-password
+    volumes:
+      - ./db/test:/var/lib/mysql 
+    ports:
+      -  "32001:3306"
+    networks:
+      - test-environment
+  
+  api-test:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_DATABASE: db-test
+      MYSQL_USER: webapp
+      MYSQL_PASSWORD: secure-password
+      HOST: db-test
+    ports:
+      - "81:5000"
+    networks:
+      - test-environment
+      - dev-environment
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - test-environment
+  
+networks:
+  test-environment:
+    name: 'test-environment'
+  dev-environment:
+    name: 'dev-environment'
