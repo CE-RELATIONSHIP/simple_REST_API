@@ -58,7 +58,6 @@ services:
       - "81:5000"
     networks:
       - test-environment
-      - dev-environment
 
   phpmyadmin:
     image: phpmyadmin
@@ -69,6 +68,7 @@ services:
       - PMA_ARBITRARY=1
     networks:
       - test-environment
+      - dev-environment
   
 networks:
   test-environment:
