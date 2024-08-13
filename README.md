@@ -1,3 +1,23 @@
+## Walkthrough
+
+### Script to make db directory
+`makefile.bat`
+
+### Run Docker
+`docker-compose up -d`
+
+### Default PhpMyAdmin
+server   : MYSQL_DATABASE
+user     : MYSQL_USER
+password : MYSQL_PASSWORD
+
+### CRUD API
+GET /user {}
+GET /user/uid  {}                                
+POST /user {uid, name, age}
+PUT /user/uid {name, age}
+DELETE /user/uid {}
+
 ## Simple API using Flask
 
 ### Run using flask
