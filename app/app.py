@@ -1,6 +1,7 @@
 
 from flask import Flask, jsonify, request
 import database
+from os import getenv
 
 app = Flask(__name__)
 
@@ -12,9 +13,9 @@ def index():
 # returns a list of registered users on a system
 @app.route('/user', methods=['GET'])
 def get_all_users():
+    result = []
     try:
         users = database.get_all("USERS")
-        result = []
         if (len(users) > 0):
             for u in users:
                 user_dict = {
@@ -25,8 +26,8 @@ def get_all_users():
             result.append(user_dict)
             
     except Exception as error:
-        result = {"error_msg": error}
-        
+        return f"{error}"
+    
     return jsonify(result)
 
 
@@ -46,7 +47,7 @@ def create_user():
     except Exception as error:
         result = {"error_msg": error}
         
-    return jsonify(result)
+    return result
 
 
 # updates user 123 with the body data
