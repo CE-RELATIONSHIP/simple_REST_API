@@ -60,7 +60,7 @@ services:
       - test-environment
 
   phpmyadmin:
-    image: phpmyadmin
+    image: docker.io/library/phpmyadmin
     restart: always
     ports:
       - 8080:80
