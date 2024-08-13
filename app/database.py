@@ -18,6 +18,30 @@ def ConnectorMysql():
     return mydb
 
 
+def InitDB():
+    try:
+        if (ConnectorMysql() is None):
+            raise "Database Can't connect"
+        mydb = ConnectorMysql()
+        cursor = mydb.cursor()
+        
+        with open('create_tables.sql', 'r') as file:
+            create_table_query = file.read()
+        
+        cursor.execute(create_table_query)
+        mydb.commit()
+        print("Table created successfully.")
+    
+    except Exception as error:
+        print(f"Error connecting to MySQL database: {error}")
+        return
+    
+    finally:
+        if mydb.is_connected():
+            cursor.close()
+            mydb.close()
+
+
 def get_all(from_table):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()

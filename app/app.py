@@ -1,12 +1,24 @@
-
 from flask import Flask, jsonify, request
 import database
 from os import getenv
 
 app = Flask(__name__)
 
+
+@app.before_first_request
+def initialize_database():
+    try:
+        if (database.ConnectorMysql() is None):
+            raise "Database Can't connect"
+        database.InitDB()
+    except Exception as e:
+        print(f"An error occurred during DB initialization: {e}")
+
+
 @app.route('/')
 def index():
+    if (database.ConnectorMysql() is None):
+        raise "Database Can't connect"
     return "Index!"
 
 
@@ -15,6 +27,8 @@ def index():
 def get_all_users():
     result = []
     try:
+        if (database.ConnectorMysql() is None):
+            raise "Database Can't connect"
         users = database.get_all("USERS")
         if (len(users) > 0):
             for u in users:
@@ -35,6 +49,8 @@ def get_all_users():
 @app.route('/user', methods=['POST'])
 def create_user():
     try:
+        if (database.ConnectorMysql() is None):
+            raise "Database Can't connect"
         data = request.get_json()
         uid = data.get('uid')
         name = data.get('name')
@@ -54,6 +70,8 @@ def create_user():
 @app.route('/user/<user_id>', methods=['PUT'])
 def update_user(user_id):
     try:
+        if (database.ConnectorMysql() is None):
+            raise "Database Can't connect"
         data = request.get_json()
         name = data.get('name')
         age = data.get('age')
@@ -70,6 +88,8 @@ def update_user(user_id):
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user(user_id):
     try:
+        if (database.ConnectorMysql() is None):
+            raise "Database Can't connect"
         user_row = database.get_data("USERS", user_id)
         result = {
             "uid": user_row[0],
@@ -87,6 +107,8 @@ def get_user(user_id):
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
+        if (database.ConnectorMysql() is None):
+            raise "Database Can't connect"
         database.delete_data("USERS", user_id)
         result = {"message": f"Delete user with id={user_id} succesful"}
 
@@ -97,4 +119,4 @@ def delete_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
