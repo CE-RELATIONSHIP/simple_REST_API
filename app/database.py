@@ -58,13 +58,11 @@ def get_data(from_table, uid):
     mycursor.execute(sql, (uid,))
     myresult = mycursor.fetchone()
     if len(myresult) > 0: 
-        for x in myresult:
-            arr = {
-                "_id" : x[0],
-                "name" : x[1],
-                "age" : int(x[2]),
-                "address" : x[3]
-                }
+        arr = {
+            "_id" : myresult[0],
+            "name" : myresult[1],
+            "age" : int(myresult[2])
+            }
     return arr
 
 

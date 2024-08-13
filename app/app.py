@@ -5,11 +5,8 @@ from os import getenv
 app = Flask(__name__)
 
 
-@app.before_first_request
 def initialize_database():
     try:
-        if (database.ConnectorMysql() is None):
-            raise "Database Can't connect"
         database.InitDB()
     except Exception as e:
         print(f"An error occurred during DB initialization: {e}")
@@ -17,8 +14,6 @@ def initialize_database():
 
 @app.route('/')
 def index():
-    if (database.ConnectorMysql() is None):
-        raise "Database Can't connect"
     return "Index!"
 
 
@@ -27,8 +22,6 @@ def index():
 def get_all_users():
     result = []
     try:
-        if (database.ConnectorMysql() is None):
-            raise "Database Can't connect"
         users = database.get_all("USERS")
         if (len(users) > 0):
             for u in users:
@@ -37,7 +30,7 @@ def get_all_users():
                 "name": u[1],
                 "age": int(u[2])
                 }
-            result.append(user_dict)
+                result.append(user_dict)
             
     except Exception as error:
         return f"{error}"
@@ -49,16 +42,16 @@ def get_all_users():
 @app.route('/user', methods=['POST'])
 def create_user():
     try:
-        if (database.ConnectorMysql() is None):
-            raise "Database Can't connect"
         data = request.get_json()
         uid = data.get('uid')
         name = data.get('name')
         age = data.get('age')
         database.insert_data("USERS", uid, name, age)
-        result = {"uid": uid,
-                "name": name,
-                "age": int(age)}
+        result = {
+                    "age": int(age),
+                    "name": name,
+                    "uid": uid
+                    }
         
     except Exception as error:
         result = {"error_msg": error}
@@ -70,8 +63,6 @@ def create_user():
 @app.route('/user/<user_id>', methods=['PUT'])
 def update_user(user_id):
     try:
-        if (database.ConnectorMysql() is None):
-            raise "Database Can't connect"
         data = request.get_json()
         name = data.get('name')
         age = data.get('age')
@@ -88,13 +79,11 @@ def update_user(user_id):
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user(user_id):
     try:
-        if (database.ConnectorMysql() is None):
-            raise "Database Can't connect"
         user_row = database.get_data("USERS", user_id)
         result = {
-            "uid": user_row[0],
+            "age": int(user_row[2]),
             "name": user_row[1],
-            "age": int(user_row[2])
+            "uid": user_row[0]
         }
 
     except Exception as error:
@@ -107,8 +96,6 @@ def get_user(user_id):
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
     try:
-        if (database.ConnectorMysql() is None):
-            raise "Database Can't connect"
         database.delete_data("USERS", user_id)
         result = {"message": f"Delete user with id={user_id} succesful"}
 
@@ -120,3 +107,6 @@ def delete_user(user_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
+    if (database.ConnectorMysql() is None):
+        raise "Database Can't connect"
+    initialize_database()
