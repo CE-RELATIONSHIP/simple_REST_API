@@ -1,9 +1,16 @@
-
 from flask import Flask, jsonify, request
 import database
 from os import getenv
 
 app = Flask(__name__)
+
+
+def initialize_database():
+    try:
+        database.InitDB()
+    except Exception as e:
+        print(f"An error occurred during DB initialization: {e}")
+
 
 @app.route('/')
 def index():
@@ -23,7 +30,7 @@ def get_all_users():
                 "name": u[1],
                 "age": int(u[2])
                 }
-            result.append(user_dict)
+                result.append(user_dict)
             
     except Exception as error:
         return f"{error}"
@@ -40,9 +47,11 @@ def create_user():
         name = data.get('name')
         age = data.get('age')
         database.insert_data("USERS", uid, name, age)
-        result = {"uid": uid,
-                "name": name,
-                "age": int(age)}
+        result = {
+                    "age": int(age),
+                    "name": name,
+                    "uid": uid
+                    }
         
     except Exception as error:
         result = {"error_msg": error}
@@ -72,9 +81,9 @@ def get_user(user_id):
     try:
         user_row = database.get_data("USERS", user_id)
         result = {
-            "uid": user_row[0],
+            "age": int(user_row[2]),
             "name": user_row[1],
-            "age": int(user_row[2])
+            "uid": user_row[0]
         }
 
     except Exception as error:
@@ -97,4 +106,7 @@ def delete_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
+    if (database.ConnectorMysql() is None):
+        raise "Database Can't connect"
+    initialize_database()
