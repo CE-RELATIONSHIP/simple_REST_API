@@ -1,8 +1,5 @@
 ## Walkthrough
 
-### Script to make db directory
-`makefile.bat`
-
 ### Run Docker
 `docker-compose up -d`
 
