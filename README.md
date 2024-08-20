@@ -7,16 +7,20 @@
 `docker-compose up -d`
 
 ### Default PhpMyAdmin
-server   : MYSQL_DATABASE
-user     : MYSQL_USER
-password : MYSQL_PASSWORD
+| Key | Config |
+| --- | --- |
+| server   | MYSQL_DATABASE |
+| user     | MYSQL_USER |
+| password | MYSQL_PASSWORD |
 
 ### CRUD API
-GET /user {}
-GET /user/uid  {}                                
-POST /user {uid, name, age}
-PUT /user/uid {name, age}
-DELETE /user/uid {}
+| Method | Path | Body |
+| --- | --- | --- |
+| GET | /user | {} |
+| GET | /user/&lt;uid&gt; | {} |
+| POST | /user | {uid, name, age} |
+| PUT | /user/&lt;uid&gt; | {name, age} |
+| DELETE | /user/&lt;uid&gt; | {} |
 
 ## Simple API using Flask
 
