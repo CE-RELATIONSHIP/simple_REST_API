@@ -10,10 +10,12 @@ services:
       MYSQL_PASSWORD: secure-password
     volumes:
       - ./db/dev:/var/lib/mysql:z
+      - ./scripts:/docker-entrypoint-initdb.d/:ro
     ports:
       -  "32000:3306"
     networks:
       - dev-environment
+    restart: unless-stopped
   
   api-dev:
     build:
@@ -28,6 +30,7 @@ services:
       - "80:5000"
     networks:
       - dev-environment
+    restart: unless-stopped
   
   db-test:
     build:
@@ -44,6 +47,7 @@ services:
       -  "32001:3306"
     networks:
       - test-environment
+    restart: unless-stopped
   
   api-test:
     build:
@@ -58,6 +62,7 @@ services:
       - "81:5000"
     networks:
       - test-environment
+    restart: unless-stopped
 
   phpmyadmin:
     image: docker.io/library/phpmyadmin
