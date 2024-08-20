@@ -3,6 +3,12 @@
 ### Run Docker
 `docker-compose up -d`
 
+### Build Docker 
+`docker-compose up --build -d`
+
+### Delete Old DB then Build Docker
+`.\window_scripts\clean_db.bat && docker-compose up --build -d`
+
 ### Default PhpMyAdmin
 | Key | Config |
 | --- | --- |
@@ -18,14 +24,3 @@
 | POST | /user | {uid, name, age} |
 | PUT | /user/&lt;uid&gt; | {name, age} |
 | DELETE | /user/&lt;uid&gt; | {} |
-
-## Simple API using Flask
-
-### Run using flask
-`python app/app.py`
-
-### Run Docker
-`docker-compose -f compose.yaml up`
-
-### Run Unittest
-`python -m unit_test`
