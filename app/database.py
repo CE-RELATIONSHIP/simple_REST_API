@@ -34,12 +34,12 @@ def get_data(from_table, uid):
     mycursor.execute(sql, (uid,))
     myresult = mycursor.fetchone()
     if len(myresult) > 0: 
-        arr = {
-            "_id" : myresult[0],
+        data = {
+            "uid" : myresult[0],
             "name" : myresult[1],
             "age" : int(myresult[2])
             }
-    return arr
+    return data
 
 
 def insert_data(from_table, uid, name, age):
