@@ -20,27 +20,29 @@ Get All Users
     Should Be Equal As Numbers    ${response.status_code}    200
     Log    ${response.json()}
 
+Create New User
+    [Documentation]    Test to create a new user.
+    ${headers}=  create dictionary   Content-Type=application/json
+    ${response}=    POST    ${USER_ENDPOINT}    ${NEW_USER}
+    Should Be Equal As Numbers    ${response.status_code}    200
+    Log    ${response.json()}
+    
 Get Specific User
     [Documentation]    Test to retrieve a specific user by UID.
     ${response}=    GET    ${USER_ENDPOINT}/${EXISTING_UID}
     Should Be Equal As Numbers    ${response.status_code}    200
     Log    ${response.json()}
 
-Create New User
-    [Documentation]    Test to create a new user.
-    ${response}=    POST    ${USER_ENDPOINT}    json=${NEW_USER}
-    Should Be Equal As Numbers    ${response.status_code}    200
-    Log    ${response.json()}
 
 Update Existing User
     [Documentation]    Test to update an existing user by UID.
-    ${response}=    PUT    ${USER_ENDPOINT}/${EXISTING_UID}    json=${UPDATED_USER}
+    ${response}=    PUT    ${USER_ENDPOINT}/${EXISTING_UID}    ${UPDATED_USER}
     Should Be Equal As Numbers    ${response.status_code}    200
     Log    ${response.json()}
 
 Delete User
     [Documentation]    Test to delete a user by UID.
-    ${response}=    DELETE    ${USER_ENDPOINT}/${EXISTING_UID}
+    ${response}=    DELETE    ${USER_ENDPOINT}/${NEW_UID}
     Should Be Equal As Numbers    ${response.status_code}    200
 
 *** Keywords ***
