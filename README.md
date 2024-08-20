@@ -24,3 +24,6 @@
 | POST | /user | {uid, name, age} |
 | PUT | /user/&lt;uid&gt; | {name, age} |
 | DELETE | /user/&lt;uid&gt; | {} |
+
+### Run Robot Unittest
+`robot --outputdir /path/to/output_directory my_test_suite.robot`
