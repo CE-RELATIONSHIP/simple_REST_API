@@ -30,7 +30,7 @@ def get_all(from_table):
 def get_data(from_table, uid):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
-    sql = f"SELECT * FROM {from_table} WHERE id=%s"
+    sql = f"SELECT * FROM {from_table} WHERE uid=%s"
     mycursor.execute(sql, (uid,))
     myresult = mycursor.fetchone()
     if len(myresult) > 0: 
