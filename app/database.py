@@ -1,75 +1,68 @@
+from flask import abort
 from global_config import GlobalConfig
 import mysql.connector
 from os import getenv
+from invalid_api_usage import InvalidAPIUsage
 
-def ConnectorMysql():
-    try:
-        mydb = mysql.connector.connect(
-                host=getenv(GlobalConfig.HOST),
-                user=getenv(GlobalConfig.USER),
-                passwd=getenv(GlobalConfig.PASSWORD),
-                database=getenv(GlobalConfig.DB_NAME),
-                auth_plugin='mysql_native_password'
-        )
-    except Exception as error:
-        print(f"Error connecting to MySQL database: {error}")
-        return
+class CollectionsName():
+    USER = 'USERS'
+
+class MySqlConnector():
+    def __init__(self, host, user, pwd, db_name, auth_plugin='mysql_native_password') -> None:
+        try:
+            self.__db = mysql.connector.connect(
+                host = host,
+                user = user,
+                passwd = pwd,
+                database = db_name,
+                auth_plugin = auth_plugin
+            )
+
+            self.__cursor = self.__db.cursor()
+        except Exception as error:
+            print(f"Error connecting to MySQL database: {error}")
+            exit(0)
     
-    return mydb
+    def get_all(self, from_table: str):
+        sql = f"SELECT * FROM {from_table};"
+        self.__cursor.execute(sql)
+        myresult = self.__cursor.fetchall()
+        return myresult
+    
+    def get_data(self, from_table: str, uid: str):
+        sql = f"SELECT * FROM {from_table} WHERE uid=%s"
+        self.__cursor.execute(sql, (uid,))
+        myresult = self.__cursor.fetchone()
+        if myresult and len(myresult) > 0: 
+            data = {
+                "uid" : myresult[0],
+                "name" : myresult[1],
+                "age" : int(myresult[2])
+                }
+        else:
+            raise InvalidAPIUsage(f"Not found any entity belong to: {uid}", 404)
+        return data
 
+    def insert_data(self, from_table, uid, name, age):
+        try:
+            sql = f"INSERT INTO {from_table} (uid,name,age) VALUES (%s ,%s, %s)"
+            val = (uid, name, age)
+            self.__cursor.execute(sql, val)
+            self.__db.commit()
+        except Exception as error:
+            raise InvalidAPIUsage(f"{error}", 400)
 
-def get_all(from_table):
-    mydb = ConnectorMysql()
-    mycursor = mydb.cursor()
-    sql = f"SELECT * FROM {from_table}; "
-    mycursor.execute(sql)
-    myresult = mycursor.fetchall()
-    return myresult
+    def update_data(self, from_table, uid, name, age):
+        self.get_data(from_table, uid)
 
+        sql = f"UPDATE {from_table} SET  name=%s , age=%s WHERE uid=%s"
+        val = (name, age, uid)
+        self.__cursor.execute(sql, val)
+        self.__db.commit()
 
-def get_data(from_table, uid):
-    mydb = ConnectorMysql()
-    mycursor = mydb.cursor()
-    sql = f"SELECT * FROM {from_table} WHERE uid=%s"
-    mycursor.execute(sql, (uid,))
-    myresult = mycursor.fetchone()
-    if len(myresult) > 0: 
-        data = {
-            "uid" : myresult[0],
-            "name" : myresult[1],
-            "age" : int(myresult[2])
-            }
-    return data
+    def delete_data(self, from_table, uid):
+        self.get_data(from_table, uid)
 
-
-def insert_data(from_table, uid, name, age):
-    mydb = ConnectorMysql()
-    mycursor = mydb.cursor()
-    print(mycursor)
-    sql = f"INSERT INTO {from_table} (uid,name,age) VALUES (%s ,%s, %s)"
-    val = (uid, name, age)
-    mycursor.execute(sql, val)
-    mydb.commit()
-    mycursor.close()
-    mydb.close()
-
-
-def update_data(from_table, uid, name, age):
-    mydb = ConnectorMysql()
-    mycursor = mydb.cursor()
-    sql = f"UPDATE {from_table} SET  name=%s , age=%s WHERE uid=%s"
-    val = (name, age, uid)
-    mycursor.execute(sql, val)
-    mydb.commit()
-    mycursor.close()
-    mydb.close()
-
-
-def delete_data(from_table, uid):
-    mydb = ConnectorMysql()
-    mycursor = mydb.cursor()
-    sql = f"DELETE  FROM {from_table} WHERE uid=%s"
-    mycursor.execute(sql, (uid,))
-    mydb.commit()
-    mycursor.close()
-    mydb.close()
+        sql = f"DELETE  FROM {from_table} WHERE uid=%s"
+        self.__cursor.execute(sql, (uid,))
+        self.__db.commit()
