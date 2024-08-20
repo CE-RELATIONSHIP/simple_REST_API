@@ -24,3 +24,17 @@
 | POST | /user | {uid, name, age} |
 | PUT | /user/&lt;uid&gt; | {name, age} |
 | DELETE | /user/&lt;uid&gt; | {} |
+
+## Simple API using Flask
+
+### Run using flask
+`python app/app.py`
+
+### Run Docker
+`docker-compose -f compose.yaml up`
+
+### Run Unittest
+`python -m unit_test`
+
+### Run Robot Unittest
+`robot --outputdir /path/to/output_directory my_test_suite.robot`
