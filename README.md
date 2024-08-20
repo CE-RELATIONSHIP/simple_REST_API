@@ -29,3 +29,6 @@
 
 ### Run Unittest
 `python -m unit_test`
+
+### Run Robot Unittest
+`robot --outputdir /path/to/output_directory my_test_suite.robot`
