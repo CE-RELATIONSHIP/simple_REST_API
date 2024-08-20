@@ -30,17 +30,15 @@ def get_all(from_table):
 def get_data(from_table, uid):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
-    sql = f"SELECT * FROM {from_table} WHERE id=%s"
+    sql = f"SELECT * FROM {from_table} WHERE uid=%s"
     mycursor.execute(sql, (uid,))
     myresult = mycursor.fetchone()
     if len(myresult) > 0: 
-        for x in myresult:
-            arr = {
-                "_id" : x[0],
-                "name" : x[1],
-                "age" : int(x[2]),
-                "address" : x[3]
-                }
+        arr = {
+            "_id" : myresult[0],
+            "name" : myresult[1],
+            "age" : int(myresult[2])
+            }
     return arr
 
 
@@ -59,7 +57,7 @@ def insert_data(from_table, uid, name, age):
 def update_data(from_table, uid, name, age):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
-    sql = f"UPDATE {from_table} SET  name=%s , age=%s WHERE id=%s"
+    sql = f"UPDATE {from_table} SET  name=%s , age=%s WHERE uid=%s"
     val = (name, age, uid)
     mycursor.execute(sql, val)
     mydb.commit()
@@ -70,7 +68,7 @@ def update_data(from_table, uid, name, age):
 def delete_data(from_table, uid):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
-    sql = f"DELETE  FROM {from_table} WHERE id=%s"
+    sql = f"DELETE  FROM {from_table} WHERE uid=%s"
     mycursor.execute(sql, (uid,))
     mydb.commit()
     mycursor.close()

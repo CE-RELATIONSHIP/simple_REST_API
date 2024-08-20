@@ -1,9 +1,9 @@
-
 from flask import Flask, jsonify, request
 import database
 from os import getenv
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def index():
@@ -23,7 +23,7 @@ def get_all_users():
                 "name": u[1],
                 "age": int(u[2])
                 }
-            result.append(user_dict)
+                result.append(user_dict)
             
     except Exception as error:
         return f"{error}"
@@ -40,14 +40,16 @@ def create_user():
         name = data.get('name')
         age = data.get('age')
         database.insert_data("USERS", uid, name, age)
-        result = {"uid": uid,
-                "name": name,
-                "age": int(age)}
+        result = {
+                    "age": int(age),
+                    "name": name,
+                    "uid": uid
+                    }
         
     except Exception as error:
-        result = {"error_msg": error}
+        result = {"error_msg": f'{error}'}
         
-    return result
+    return jsonify(result)
 
 
 # updates user 123 with the body data
@@ -61,9 +63,9 @@ def update_user(user_id):
         result = {"message": f"Update user with id={user_id} succesful"}
         
     except Exception as error:
-        result = {"error_msg": error}  
+        result = {"error_msg": f'{error}'}  
         
-    return  result
+    return  jsonify(result)
 
 
 # returns the details of user 123
@@ -72,9 +74,9 @@ def get_user(user_id):
     try:
         user_row = database.get_data("USERS", user_id)
         result = {
-            "uid": user_row[0],
+            "age": int(user_row[2]),
             "name": user_row[1],
-            "age": int(user_row[2])
+            "uid": user_row[0]
         }
 
     except Exception as error:
@@ -97,4 +99,4 @@ def delete_user(user_id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
