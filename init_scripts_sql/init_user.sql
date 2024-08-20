@@ -4,7 +4,7 @@ SELECT 'Starting table creation...' AS Status;
 -- Table Creation
 CREATE TABLE IF NOT EXISTS USERS (
     uid VARCHAR(255) PRIMARY KEY,
-    username TEXT(255),
+    name TEXT(255),
     age INT
 );
 

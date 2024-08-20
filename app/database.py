@@ -57,7 +57,7 @@ def insert_data(from_table, uid, name, age):
 def update_data(from_table, uid, name, age):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
-    sql = f"UPDATE {from_table} SET  name=%s , age=%s WHERE id=%s"
+    sql = f"UPDATE {from_table} SET  name=%s , age=%s WHERE uid=%s"
     val = (name, age, uid)
     mycursor.execute(sql, val)
     mydb.commit()
@@ -68,7 +68,7 @@ def update_data(from_table, uid, name, age):
 def delete_data(from_table, uid):
     mydb = ConnectorMysql()
     mycursor = mydb.cursor()
-    sql = f"DELETE  FROM {from_table} WHERE id=%s"
+    sql = f"DELETE  FROM {from_table} WHERE uid=%s"
     mycursor.execute(sql, (uid,))
     mydb.commit()
     mycursor.close()

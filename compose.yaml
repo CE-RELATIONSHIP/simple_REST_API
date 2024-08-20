@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: secure-password
     volumes:
       - ./db/dev:/var/lib/mysql:z
-      - ./scripts:/docker-entrypoint-initdb.d/:ro
+      - ./init_scripts_sql:/docker-entrypoint-initdb.d/:ro
     ports:
       -  "32000:3306"
     networks:
@@ -30,6 +30,8 @@ services:
       - "80:5000"
     networks:
       - dev-environment
+    depends_on:
+      - db-dev
     restart: unless-stopped
   
   db-test:
@@ -43,7 +45,7 @@ services:
       MYSQL_PASSWORD: secure-password
     volumes:
       - ./db/test:/var/lib/mysql:z
-      - ./scripts:/docker-entrypoint-initdb.d/:ro
+      - ./init_scripts_sql:/docker-entrypoint-initdb.d/:ro
     ports:
       -  "32001:3306"
     networks:
@@ -63,6 +65,8 @@ services:
       - "81:5000"
     networks:
       - test-environment
+    depends_on:
+      - db-test
     restart: unless-stopped
 
   phpmyadmin:
