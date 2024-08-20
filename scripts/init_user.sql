@@ -1,5 +1,0 @@
-CREATE TABLE IF NOT EXISTS USERS (
-    uid TEXT(255) PRIMARY KEY,
-    username TEXT(255),
-    age INT
-);
