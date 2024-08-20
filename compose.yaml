@@ -30,6 +30,8 @@ services:
       - "80:5000"
     networks:
       - dev-environment
+    depends_on:
+      - db-dev
     restart: unless-stopped
   
   db-test:
@@ -63,6 +65,8 @@ services:
       - "81:5000"
     networks:
       - test-environment
+    depends_on:
+      - db-test
     restart: unless-stopped
 
   phpmyadmin:

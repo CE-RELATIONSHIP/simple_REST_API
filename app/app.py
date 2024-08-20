@@ -47,9 +47,9 @@ def create_user():
                     }
         
     except Exception as error:
-        result = {"error_msg": error}
+        result = {"error_msg": f'{error}'}
         
-    return result
+    return jsonify(result)
 
 
 # updates user 123 with the body data
@@ -63,9 +63,9 @@ def update_user(user_id):
         result = {"message": f"Update user with id={user_id} succesful"}
         
     except Exception as error:
-        result = {"error_msg": error}  
+        result = {"error_msg": f'{error}'}  
         
-    return  result
+    return  jsonify(result)
 
 
 # returns the details of user 123
