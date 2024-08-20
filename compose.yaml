@@ -43,6 +43,7 @@ services:
       MYSQL_PASSWORD: secure-password
     volumes:
       - ./db/test:/var/lib/mysql:z
+      - ./scripts:/docker-entrypoint-initdb.d/:ro
     ports:
       -  "32001:3306"
     networks:
