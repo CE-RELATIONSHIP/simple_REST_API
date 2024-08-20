@@ -5,13 +5,6 @@ from os import getenv
 app = Flask(__name__)
 
 
-def initialize_database():
-    try:
-        database.InitDB()
-    except Exception as e:
-        print(f"An error occurred during DB initialization: {e}")
-
-
 @app.route('/')
 def index():
     return "Index!"
@@ -107,6 +100,3 @@ def delete_user(user_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    if (database.ConnectorMysql() is None):
-        raise "Database Can't connect"
-    initialize_database()
