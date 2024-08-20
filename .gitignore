@@ -3,3 +3,4 @@
 db
 robot_unit_test
 !robot_unit_test/unit_test.robot
+!robot_unit_test/requirements.txt
