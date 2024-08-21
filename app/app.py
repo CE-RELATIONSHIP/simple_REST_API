@@ -1,9 +1,24 @@
-from flask import Flask, jsonify, request
-import database
+from database import MySqlConnector, CollectionsName
+from global_config import GlobalConfig
+from flask import Flask, jsonify, request, abort
 from os import getenv
+from invalid_api_usage import InvalidAPIUsage
 
 app = Flask(__name__)
+_db = MySqlConnector(
+    host=getenv(GlobalConfig.HOST),
+    user=getenv(GlobalConfig.USER),
+    pwd=getenv(GlobalConfig.PASSWORD),
+    db_name=getenv(GlobalConfig.DB_NAME)
+)
 
+@app.errorhandler(Exception)
+def invalid_api_usage(e):
+    return jsonify({ "error_message": f'{e}' }), 500
+
+@app.errorhandler(InvalidAPIUsage)
+def invalid_api_usage(e):
+    return jsonify(e.to_dict()), e.status_code
 
 @app.route('/')
 def index():
@@ -14,19 +29,15 @@ def index():
 @app.route('/user', methods=['GET'])
 def get_all_users():
     result = []
-    try:
-        users = database.get_all("USERS")
-        if (len(users) > 0):
-            for u in users:
-                user_dict = {
-                "uid": u[0],
-                "name": u[1],
-                "age": int(u[2])
-                }
-                result.append(user_dict)
-            
-    except Exception as error:
-        return f"{error}"
+    users = _db.get_all(CollectionsName.USER)
+    if (users and len(users) > 0):
+        for u in users:
+            user_dict = {
+            "uid": u[0],
+            "name": u[1],
+            "age": int(u[2])
+            }
+            result.append(user_dict)
     
     return jsonify(result)
 
@@ -34,36 +45,27 @@ def get_all_users():
 # creates a user with the ID 123 using the body data. The response returns the ID.
 @app.route('/user', methods=['POST'])
 def create_user():
-    try:
-        data = request.get_json()
-        uid = data.get('uid')
-        name = data.get('name')
-        age = data.get('age')
-        database.insert_data("USERS", uid, name, age)
-        result = {
-                    "age": int(age),
-                    "name": name,
-                    "uid": uid
-                    }
-        
-    except Exception as error:
-        result = {"error_msg": f'{error}'}
-        
+    data = request.get_json()
+    uid = data.get('uid')
+    name = data.get('name')
+    age = data.get('age')
+    _db.insert_data(CollectionsName.USER, uid, name, age)
+    result = {
+                "age": int(age),
+                "name": name,
+                "uid": uid
+            }
     return jsonify(result)
 
 
 # updates user 123 with the body data
 @app.route('/user/<user_id>', methods=['PUT'])
 def update_user(user_id):
-    try:
-        data = request.get_json()
-        name = data.get('name')
-        age = data.get('age')
-        database.update_data("USERS", user_id, name, age)
-        result = {"message": f"Update user with id={user_id} succesful"}
-        
-    except Exception as error:
-        result = {"error_msg": f'{error}'}  
+    data = request.get_json()
+    name = data.get('name')
+    age = data.get('age')
+    _db.update_data(CollectionsName.USER, user_id, name, age)
+    result = {"message": f"Update user with id={user_id} succesful"} 
         
     return  jsonify(result)
 
@@ -71,27 +73,17 @@ def update_user(user_id):
 # returns the details of user 123
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user(user_id):
-    try:
-        result = database.get_data("USERS", user_id)
-
-    except Exception as error:
-        result = {"error_msg": f'{error}'} 
-        
+    result = _db.get_data(CollectionsName.USER, user_id)
     return jsonify(result)
 
 
 # deletes user 123
 @app.route('/user/<user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    try:
-        database.delete_data("USERS", user_id)
-        result = {"message": f"Delete user with id={user_id} succesful"}
-
-    except Exception as error:
-        result = {"error_msg": error} 
+    _db.delete_data(CollectionsName.USER, user_id)
+    result = {"message": f"Delete user with id={user_id} succesful"}
         
     return jsonify(result)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
