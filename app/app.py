@@ -1,8 +1,9 @@
 from database import MySqlConnector, CollectionsName
 from global_config import GlobalConfig
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request
 from os import getenv
 from invalid_api_usage import InvalidAPIUsage
+import json
 
 app = Flask(__name__)
 _db = MySqlConnector(
@@ -46,6 +47,9 @@ def get_all_users():
 @app.route('/user', methods=['POST'])
 def create_user():
     data = request.get_json()
+    if isinstance(data, str):
+        data = json.loads(data)
+
     uid = data.get('uid')
     name = data.get('name')
     age = data.get('age')
@@ -62,6 +66,9 @@ def create_user():
 @app.route('/user/<user_id>', methods=['PUT'])
 def update_user(user_id):
     data = request.get_json()
+    if isinstance(data, str):
+        data = json.loads(data)
+    
     name = data.get('name')
     age = data.get('age')
     _db.update_data(CollectionsName.USER, user_id, name, age)
