@@ -72,15 +72,10 @@ def update_user(user_id):
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user(user_id):
     try:
-        user_row = database.get_data("USERS", user_id)
-        result = {
-            "age": int(user_row[2]),
-            "name": user_row[1],
-            "uid": user_row[0]
-        }
+        result = database.get_data("USERS", user_id)
 
     except Exception as error:
-        result = {"error_msg": error} 
+        result = {"error_msg": f'{error}'} 
         
     return jsonify(result)
 
