@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'master' }
     environment {
         APP_NAME = "test app"
     }
@@ -7,6 +7,7 @@ pipeline {
         stage("Build Image") {
             steps {
                 sh "echo ${env.APP_NAME}"
+                sh "docker version"
             }
         }
     }
